@@ -1,0 +1,68 @@
+:root {
+  --bg: oklch(0.145 0.022 260);
+  --fg: oklch(0.965 0.01 270);
+  --muted: oklch(0.7 0.027 258);
+  --surface: oklch(0.255 0.035 257);
+  --border: oklch(0.3 0.035 257);
+  --accent: oklch(0.86 0.135 183);
+  --ring-bg: oklch(0.31 0.06 239);
+  --bubble: oklch(0.94 0.025 224);
+  --purple: oklch(0.72 0.15 293);
+  --shadow: oklch(0.02 0 0);
+  --font-display: 'Bangers', Impact, sans-serif;
+  --font-body: 'Roboto', Arial, sans-serif;
+  --font-mono: 'Roboto Mono', monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; border: 0 solid var(--border); }
+
+body {
+  font: 14px / 1.5 var(--font-body);
+  color: var(--fg);
+  background-color: var(--bg);
+}
+
+a { color: inherit; text-decoration: none; }
+img { display: block; max-width: 100%; }
+
+/* botões */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 36px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font: 500 14px / 20px var(--font-body);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.15s, transform 0.1s;
+}
+.btn svg { width: 16px; height: 16px; flex-shrink: 0; }
+.btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.btn-ghost { background: transparent; color: var(--fg); }
+.btn-ghost:hover { background: var(--surface); }
+
+.btn-outline { background: var(--bg); color: var(--fg); border: 1px solid var(--border); }
+.btn-outline:hover { background: var(--surface); }
+
+.btn-primary { background: var(--accent); color: var(--bg); }
+
+.btn-jurado {
+  background-color: var(--purple);
+  color: var(--bg);
+}
+
+.comic-button {
+  font-weight: 700;
+  border: 1px solid var(--bg);
+  box-shadow: 4px 5px 0 0 var(--shadow);
+}
+.comic-button:hover { transform: translate(-1px, -1px); box-shadow: 5px 6px 0 0 var(--shadow); }
+.comic-button:active { transform: translate(3px, 4px); box-shadow: 1px 1px 0 0 var(--shadow); }
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}

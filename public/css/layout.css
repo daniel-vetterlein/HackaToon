@@ -1,0 +1,162 @@
+.site-page { min-height: 100vh; display: flex; flex-direction: column; }
+
+/* cabeçalho */
+.site-header { border-bottom: 1px solid var(--border); }
+.header-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 25px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+.brand { display: flex; align-items: center; gap: 10px; font: 29px / 1.5 var(--font-display); }
+.brand-icon {
+  display: grid;
+  place-items: center;
+  width: 33px;
+  height: 33px;
+  border-radius: 8px;
+  background: var(--accent);
+  color: var(--bg);
+}
+.brand-icon svg { width: 20px; height: 20px; }
+
+.reference-nav { display: flex; gap: 28px; font-size: 12px; line-height: 18px; color: var(--muted); }
+.reference-nav a:hover, .reference-nav a.active { color: var(--fg); }
+
+.header-actions { display: flex; align-items: center; gap: 8px; }
+
+/* rodapé */
+.ticker {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 32px;
+  background: var(--accent);
+  color: var(--bg);
+}
+.ticker strong { font: 400 25px / 1.5 var(--font-display); letter-spacing: 0.06em; }
+
+@media (max-width: 860px) {
+  .reference-nav { display: none; }
+  .header-inner { padding: 16px 20px; }
+}
+
+/* modal de cadastro */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(3px);
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  z-index: 1000;
+}
+
+.modal-overlay.ativo {
+  display: flex;
+}
+
+.modal-conteudo {
+  position: relative;
+  width: 100%;
+  max-width: 640px;
+  padding: 36px 28px;
+  background-color: #0E1825;
+  color: var(--fg);
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 6px 8px 0 0 var(--shadow);
+  text-align: center;
+}
+
+.btn-fechar {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+
+.btn-fechar:hover {
+  color: var(--accent);
+}
+
+.modal-titulo {
+  font: 400 36px / 1.15 var(--font-display);
+  letter-spacing: 0.04em;
+  color: var(--fg);
+  margin-bottom: 8px;
+}
+
+.modal-titulo em {
+  font-style: normal;
+  color: var(--accent);
+}
+
+.modal-subtitulo {
+  margin-top: 24px;
+  color: var(--muted);
+  margin-bottom: 24px;
+}
+
+.modal-subtitulo p, em {
+  margin-top: 24px;
+  font-style: normal;
+  color: var(--accent);
+}
+
+.modal-opcoes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  text-align: left;
+}
+
+.modal-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px;
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.modal-card h3 {
+  font: 400 28px / 1.2 var(--font-display);
+  letter-spacing: 0.04em;
+  color: var(--fg);
+  margin-bottom: 6px;
+}
+
+.modal-card p {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--muted);
+  flex-grow: 1;
+}
+
+.modal-card .btn {
+  width: 100%;
+  height: 40px;
+}
+
+@media (max-width: 600px) {
+  .modal-opcoes {
+    grid-template-columns: 1fr;
+  }
+}
