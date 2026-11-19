@@ -1,19 +1,140 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Cadastrar Organizador</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cadastro de organizador | HACKTOON</title>
+  <meta name="description" content="Comece a organização do próximo grande evento.">
 
-	<link rel="preconnect" href="https://fonts.googleapis.com">
-  	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bangers&family=Roboto:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bangers&family=Roboto:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap">
 
-  	<link rel="stylesheet" href="/css/base.css">
-  	<link rel="stylesheet" href="/css/layout.css">
-  	<link rel="stylesheet" href="/css/paginas/home.css">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/componentes.css">
+  <link rel="stylesheet" href="/css/formulario.css">
+  <link rel="stylesheet" href="/css/paginas/cadastro.css">
 </head>
 <body>
-	
+  <div class="site-page">
+    <div id="menu"></div>
+
+    <main class="cadastro-main">
+      <section class="cadastro-hero">
+        <div class="hero-topo">
+          <a class="voltar" href="/">← Voltar</a>
+          <span class="eyebrow">QUEM FAZ O HACKATHON ACONTECER</span>
+        </div>
+
+        <h1>GRANDES IDEIAS. GRANDES EVENTOS. <em>COMEÇAM COM VOCÊ.</em></h1>
+        <p>Entre para a organização do Hackathon HACKOON e ajude a transformar ideias em experiências incríveis.</p>
+
+        <div class="mascot-scene">
+          <div class="mascot-rings"></div>
+          <img class="mascot-image" src="/img/hacktoon-mascot.png" alt="Hackoon, o guaxinim com mochila e notebook">
+          <div class="speech-bubble">BORA FAZER ACONTECER?</div>
+          <span class="mascot-exclaim">!!</span>
+          <span class="mascot-tag">IDEIA + EQUIPE + UM POUCO DE CAOS</span>
+        </div>
+
+        <div class="small-note">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/><path d="M20 2v4"/><path d="M22 4h-4"/><circle cx="4" cy="20" r="2"/></svg>
+          Nos bastidores também nasce a inovação.
+        </div>
+      </section>
+
+      <section class="cadastro-card">
+        <div class="cadastro-topo"><span>CADASTRO DE ORGANIZADOR</span><span id="contador">1/2</span></div>
+
+        <ol class="passos">
+          <li class="passo ativo" data-passo><b>1</b> Dados do organizador</li>
+          <li class="passo" data-passo><b>2</b> Verificação em duas etapas</li>
+        </ol>
+
+        <form data-cadastro data-api="/api/organizadores" novalidate>
+          <div class="etapa" data-etapa>
+            <h2>O PRÓXIMO GRANDE EVENTO COMEÇA AQUI.</h2>
+            <p class="etapa-sub">Crie seu acesso como Organizador do Hackathon HACKOON.</p>
+            <p class="obrigatorio"><span class="req">*</span> Campos obrigatórios</p>
+
+            <div class="campo">
+              <label for="nome">Nome completo <span class="req">*</span></label>
+              <input id="nome" name="nome" type="text" autocomplete="name" required maxlength="120">
+            </div>
+            <div class="campo">
+              <label for="email">E-mail <span class="req">*</span></label>
+              <input id="email" name="email" type="email" autocomplete="email" required maxlength="160">
+            </div>
+            <div class="campo">
+              <label for="telefone">Telefone <span class="req">*</span></label>
+              <input id="telefone" name="telefone" type="tel" autocomplete="tel" required pattern="[0-9 ()+\-]{10,20}" title="Informe DDD e número (dígitos, espaços, parênteses, + ou -)">
+            </div>
+            <div class="campo">
+              <label for="senha">Senha <span class="req">*</span></label>
+              <input id="senha" name="senha" type="password" autocomplete="new-password" required minlength="8" maxlength="128">
+              <small>Use uma senha forte e exclusiva para sua conta.</small>
+            </div>
+            <div class="campo">
+              <label for="instituicao">Instituição <span class="req">*</span></label>
+              <input id="instituicao" name="instituicao" type="text" autocomplete="organization" required maxlength="120">
+            </div>
+
+            <fieldset class="campo">
+              <legend>Verificação em duas etapas</legend>
+              <small>Como você prefere receber o código para confirmar seu acesso?</small>
+              <div class="opcoes">
+                <label class="opcao"><input type="radio" name="metodo" value="email" checked><strong>E-mail</strong><span>Código por e-mail</span></label>
+                <label class="opcao"><input type="radio" name="metodo" value="sms"><strong>Telefone</strong><span>Código por SMS</span></label>
+              </div>
+            </fieldset>
+
+            <div class="acoes">
+              <button class="btn btn-primary comic-button" type="button" data-acao="avancar" data-api="/api/organizadores/codigo">
+                <span data-rotulo-metodo>Enviar código por e-mail</span>
+              </button>
+              <p class="nota">A seguir: digite o código para confirmar seu acesso.</p>
+            </div>
+          </div>
+
+          <!-- Passo 2: o original só mostra depois do passo 1; este texto é sugestão -->
+          <div class="etapa" data-etapa hidden>
+            <h2>CONFIRME SEU ACESSO</h2>
+            <p class="etapa-sub">Digite o código de 6 dígitos que enviamos para você.</p>
+
+            <div class="campo">
+              <label for="codigo">Código de verificação <span class="req">*</span></label>
+              <input id="codigo" name="codigo" type="text" inputmode="numeric" autocomplete="one-time-code" required pattern="[0-9]{6}" maxlength="6" title="Código de 6 dígitos">
+              <small>Não chegou? Volte e envie o código de novo.</small>
+            </div>
+
+            <div class="acoes">
+              <button class="btn btn-primary comic-button" type="submit">Confirmar e criar conta</button>
+              <button class="btn btn-outline" type="button" data-acao="voltar">Voltar</button>
+            </div>
+          </div>
+
+          <p class="form-erro" role="alert"></p>
+        </form>
+
+        <p class="link-conta">Já tem uma conta? <a href="/login">Entrar</a></p>
+      </section>
+    </main>
+
+    <footer>
+      <div class="rodape-cadastro">
+        <span>HACKTOON · Uma ideia, mil possibilidades.</span>
+        <span>IDEIA + EQUIPE + UM POUCO DE CAOS</span>
+      </div>
+      <div class="ticker">
+        <span>✦</span>
+        <strong>SEU PRÓXIMO CAPÍTULO COMEÇA COM UMA IDEIA.</strong>
+        <span>✦</span>
+      </div>
+    </footer>
+  </div>
+
+  <script src="/js/menu.js" defer></script>
+  <script src="/js/cadastro.js" defer></script>
 </body>
 </html>
