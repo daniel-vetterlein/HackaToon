@@ -1,0 +1,29 @@
+.cadastro-main {
+  flex: 1; width: 100%; max-width: 1200px; margin: 0 auto; padding: 32px;
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 48px; align-items: center;
+}
+.cadastro-hero { display: flex; flex-direction: column; align-items: flex-start; gap: 20px; }
+.hero-topo { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.voltar { font-size: 12px; color: var(--muted); }
+.voltar:hover { color: var(--fg); }
+.cadastro-hero h1 { font: clamp(34px, 4.6vw, 60px) / 1.12 var(--font-display); }
+.cadastro-hero h1 em { font-style: normal; color: var(--accent); }
+.cadastro-hero > p { max-width: 460px; font: 16px / 1.7 var(--font-body); color: var(--muted); }
+
+.cadastro-hero .mascot-scene { max-width: 320px; }
+.cadastro-hero .speech-bubble { padding: 8px 12px; font-size: 19px; }
+.cadastro-hero .mascot-exclaim { font-size: 36px; }
+.cadastro-hero .mascot-tag { font-size: 8px; }
+
+.cadastro-card { padding: 28px; border: 1px solid var(--border); border-radius: 16px; background: var(--surface); }
+
+.rodape-cadastro {
+  display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px;
+  padding: 14px 32px; border-top: 1px solid var(--border);
+  font: 11px var(--font-mono); color: var(--muted);
+}
+
+@media (max-width: 860px) {
+  .cadastro-main { grid-template-columns: 1fr; padding: 24px 20px; gap: 32px; }
+  .cadastro-hero .mascot-scene { display: none; }
+}

@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/daniel-vetterlein/HackaToon/issues"
   },
-  "homepage": "https://github.com/daniel-vetterlein/HackaToon#readme"
+  "homepage": "https://github.com/daniel-vetterlein/HackaToon#readme",
+  "dependencies": {
+    "argon2": "^0.45.2"
+  }
 }
