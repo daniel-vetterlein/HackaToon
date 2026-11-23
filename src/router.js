@@ -1,9 +1,13 @@
 const { servir } = require('./static');
 const { json } = require('./utils/http');
 const participantes = require('./routes/participantes');
+const organizadores = require('./routes/organizadores');
 
 const ROTAS = {
   'POST /api/participantes': participantes.criar,
+  // Rotas de cadastro e verificação em duas etapas do organizador
+  'POST /api/organizadores/codigo': organizadores.enviarCodigo,
+  'POST /api/organizadores': organizadores.criar,
 };
 
 async function tratar(req, res) {

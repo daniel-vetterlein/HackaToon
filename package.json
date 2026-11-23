@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/daniel-vetterlein/HackaToon#readme",
   "dependencies": {
-    "argon2": "^0.45.2"
+    "argon2": "^0.45.2",
+    "nodemailer": "^10.6.1"
   }
 }

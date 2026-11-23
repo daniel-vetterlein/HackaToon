@@ -4,6 +4,9 @@ const { lerJson, json } = require('../utils/http');
 const { gerarHash } = require('../utils/senha');
 const envio = require('../services/envio');
 
+// Chave de controle do 2FA: defina EXIGIR_VERIFICACAO=true no .env (ou mude para true) para reativar
+const EXIGIR_VERIFICACAO = process.env.EXIGIR_VERIFICACAO === 'true';
+
 const REGEX_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const VALIDADE_MS = 10 * 60 * 1000;   // o código vale 10 minutos
 const MAX_TENTATIVAS = 5;
@@ -85,20 +88,23 @@ async function criar(req, res) {
   const { erro, dados } = validar(corpo);
   if (erro) return json(res, 400, { erro });
 
-  const codigo = String(corpo.codigo ?? '').trim();
-  if (!/^\d{6}$/.test(codigo)) return json(res, 400, { erro: 'Digite o código de 6 dígitos.' });
+  // Valida o código de 6 dígitos somente se o 2FA estiver ativo
+  if (EXIGIR_VERIFICACAO) {
+    const codigo = String(corpo.codigo ?? '').trim();
+    if (!/^\d{6}$/.test(codigo)) return json(res, 400, { erro: 'Digite o código de 6 dígitos.' });
 
-  const v = db.prepare('SELECT * FROM verificacoes WHERE email = ?').get(dados.email);
-  if (!v || new Date(v.expira_em) < new Date()) {
-    return json(res, 400, { erro: 'Código expirado. Volte e envie um novo.' });
-  }
-  if (v.tentativas >= MAX_TENTATIVAS) {
-    db.prepare('DELETE FROM verificacoes WHERE id = ?').run(v.id);
-    return json(res, 429, { erro: 'Muitas tentativas. Volte e envie um novo código.' });
-  }
-  if (!codigoConfere(codigo, v.codigo_hash)) {
-    db.prepare('UPDATE verificacoes SET tentativas = tentativas + 1 WHERE id = ?').run(v.id);
-    return json(res, 400, { erro: 'Código incorreto.' });
+    const v = db.prepare('SELECT * FROM verificacoes WHERE email = ?').get(dados.email);
+    if (!v || new Date(v.expira_em) < new Date()) {
+      return json(res, 400, { erro: 'Código expirado. Volte e envie um novo.' });
+    }
+    if (v.tentativas >= MAX_TENTATIVAS) {
+      db.prepare('DELETE FROM verificacoes WHERE id = ?').run(v.id);
+      return json(res, 429, { erro: 'Muitas tentativas. Volte e envie um novo código.' });
+    }
+    if (!codigoConfere(codigo, v.codigo_hash)) {
+      db.prepare('UPDATE verificacoes SET tentativas = tentativas + 1 WHERE id = ?').run(v.id);
+      return json(res, 400, { erro: 'Código incorreto.' });
+    }
   }
 
   const senhaHash = await gerarHash(dados.senha);
@@ -115,7 +121,10 @@ async function criar(req, res) {
     return json(res, 500, { erro: 'Erro interno ao cadastrar.' });
   }
 
-  db.prepare('DELETE FROM verificacoes WHERE email = ?').run(dados.email);
+  // Remove o código usado após confirmar o cadastro
+  if (EXIGIR_VERIFICACAO) {
+    db.prepare('DELETE FROM verificacoes WHERE email = ?').run(dados.email);
+  }
   json(res, 201, { ok: true });
 }
 
