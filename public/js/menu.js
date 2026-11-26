@@ -16,8 +16,9 @@ async function carregarMenu() {
     const htmlModal = await respModal.text();
     document.body.insertAdjacentHTML('beforeend', htmlModal);
 
+    await configurarSessao(alvo);
     configurarModal();
-    
+
   } catch (erro) {
     console.error('Não foi possível carregar o menu', erro);
   }
@@ -59,3 +60,37 @@ function configurarModal() {
 }
 
 carregarMenu();
+
+async function sair() {
+  await fetch('/api/logout', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: '{}',
+  }).catch(() => {});
+  location.href = '/login';
+}
+window.hkSair = sair;
+
+// Troca "Entrar / Criar conta" por "Painel / Sair" quando há sessão
+async function configurarSessao(alvo) {
+  try {
+    const resp = await fetch('/api/me');
+    if (!resp.ok) return;
+    const { usuario } = await resp.json();
+    const acoes = alvo.querySelector('.header-actions');
+    if (!acoes) return;
+    acoes.innerHTML = '';
+
+    const painel = document.createElement('a');
+    painel.className = 'btn btn-ghost';
+    painel.href = '/painel';
+    painel.textContent = usuario.nome.split(' ')[0];
+
+    const botao = document.createElement('button');
+    botao.className = 'btn btn-primary comic-button';
+    botao.textContent = 'Sair';
+    botao.addEventListener('click', sair);
+
+    acoes.append(painel, botao);
+  } catch { /* segue deslogado */ }
+}

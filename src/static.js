@@ -1,6 +1,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { pipeline } = require('node:stream');
+const { usuarioDaRequisicao } = require('./utils/sessao');
 
 const PUBLIC = path.resolve(__dirname, '..', 'public');
 const PAGES_DIR = path.resolve(PUBLIC, 'pages');
@@ -21,12 +22,19 @@ const TIPOS = {
   '.woff2': 'font/woff2',
 };
 
+// acesso: 'publico' | 'visitante' (só deslogado) | 'logado' | 'organizador' | 'participante'
 const PAGINAS = {
-  '/': 'index.html',
-  '/login': 'login.html',
-  '/cadastrar-organizador': 'cadastrar-organizador.html',
-  '/cadastrar-participante': 'cadastrar-participante.html',
+  '/': { arquivo: 'index.html', acesso: 'publico' },
+  '/login': { arquivo: 'login.html', acesso: 'visitante' },
+  '/cadastrar-organizador': { arquivo: 'cadastrar-organizador.html', acesso: 'visitante' },
+  '/cadastrar-participante': { arquivo: 'cadastrar-participante.html', acesso: 'visitante' },
+  '/painel': { arquivo: 'painel.html', acesso: 'logado' },
 };
+
+function redirecionar(res, destino) {
+  res.writeHead(302, { Location: destino, 'Cache-Control': 'no-store' });
+  res.end();
+}
 
 function erro(res, codigo, mensagem, extras = {}) {
   res.writeHead(codigo, {
@@ -64,7 +72,18 @@ function servir(req, res) {
   let caminho;
 
   if (Object.hasOwn(PAGINAS, urlLimpa)) {
-    caminho = path.resolve(PAGES_DIR, PAGINAS[urlLimpa]);
+    const { arquivo, acesso } = PAGINAS[urlLimpa];
+    if (acesso !== 'publico') {
+      const usuario = usuarioDaRequisicao(req);
+      if (acesso === 'visitante' && usuario) return redirecionar(res, '/painel');
+      if (acesso !== 'visitante' && !usuario) {
+        return redirecionar(res, `/login?next=${encodeURIComponent(urlLimpa)}`);
+      }
+      if (usuario && (acesso === 'organizador' || acesso === 'participante') && usuario.tipo !== acesso) {
+        return redirecionar(res, '/painel');
+      }
+    }
+    caminho = path.resolve(PAGES_DIR, arquivo);
   } else {
     caminho = path.resolve(PUBLIC, urlLimpa.slice(1));
 
@@ -91,6 +110,7 @@ function servir(req, res) {
       'Content-Type': tipo,
       'Content-Length': stats.size,
       'X-Content-Type-Options': 'nosniff',
+      ...(caminho.startsWith(PAGES_DIR) ? { 'Cache-Control': 'no-store' } : {}),
     });
 
     if (req.method === 'HEAD') {

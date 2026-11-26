@@ -2,11 +2,13 @@ const { DatabaseSync } = require('node:sqlite');
 const path = require('node:path');
 const fs = require('node:fs');
 
-const pasta = path.join(__dirname, '..', 'data');
-fs.mkdirSync(pasta, { recursive: true });
+// Caminho configurável (ex.: volume do Railway: DB_PATH=/data/dados.db)
+const caminhoDb = path.resolve(process.env.DB_PATH || path.join(__dirname, '..', 'data', 'dados.db'));
+fs.mkdirSync(path.dirname(caminhoDb), { recursive: true });
 
-const db = new DatabaseSync(path.join(pasta, 'dados.db'));
+const db = new DatabaseSync(caminhoDb);
 
+db.exec('PRAGMA journal_mode = WAL');
 db.exec('PRAGMA foreign_keys = ON');
 
 db.exec(`
@@ -22,13 +24,14 @@ db.exec(`
         CHECK (tipo <> 'organizador' OR instituicao IS NOT NULL)
     );
 
-    CREATE TABLE IF NOT EXISTS verificacoes (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        email TEXT NOT NULL COLLATE NOCASE,
-        codigo_hash TEXT NOT NULL,
-        expira_em TEXT NOT NULL,
-        tentativas INTEGER NOT NULL DEFAULT 0
+    CREATE TABLE IF NOT EXISTS sessoes (
+        token_hash TEXT PRIMARY KEY,
+        usuario_id INTEGER NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
+        expira_em INTEGER NOT NULL
     );
+    CREATE INDEX IF NOT EXISTS idx_sessoes_usuario ON sessoes(usuario_id);
+
+    DROP TABLE IF EXISTS verificacoes;
 `);
 
 module.exports = db;

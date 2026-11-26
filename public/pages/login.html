@@ -1,11 +1,67 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>login</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Entrar | HACKTOON</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bangers&family=Roboto:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap">
+
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/componentes.css">
+  <link rel="stylesheet" href="/css/formulario.css">
+  <link rel="stylesheet" href="/css/paginas/cadastro.css">
 </head>
 <body>
-	
+  <div class="site-page">
+    <div id="menu"></div>
+
+    <main class="cadastro-main">
+      <section class="cadastro-hero">
+        <div class="hero-topo">
+          <a class="voltar" href="/">← Voltar</a>
+          <span class="eyebrow">QUE BOM TE VER DE NOVO</span>
+        </div>
+        <h1>CONTINUE DE ONDE <em>PAROU.</em></h1>
+        <p>Entre na sua conta para acessar eventos, equipes e projetos.</p>
+        <div class="mascot-scene">
+          <div class="mascot-rings"></div>
+          <img class="mascot-image" src="/img/hacktoon-mascot.png" alt="Hackoon, o guaxinim com mochila e notebook">
+          <div class="speech-bubble">BEM-VINDO DE VOLTA!</div>
+        </div>
+      </section>
+
+      <section class="cadastro-card">
+        <div class="cadastro-topo"><span>ENTRAR NO HACKOON</span></div>
+
+        <form id="form-login" novalidate>
+          <h2 class="login-titulo">ACESSE SUA CONTA</h2>
+          <p class="aviso-ok" id="aviso-cadastro" hidden>Conta criada! Entre com seu e-mail e senha.</p>
+
+          <div class="campo">
+            <label for="email">E-mail</label>
+            <input id="email" name="email" type="email" autocomplete="email" required maxlength="160">
+          </div>
+          <div class="campo">
+            <label for="senha">Senha</label>
+            <input id="senha" name="senha" type="password" autocomplete="current-password" required maxlength="128">
+          </div>
+
+          <p class="form-erro" role="alert"></p>
+          <div class="acoes">
+            <button class="btn btn-primary comic-button" type="submit">Entrar</button>
+          </div>
+        </form>
+
+        <p class="link-conta">Ainda não tem conta? <a href="/cadastrar-participante">Participante</a> · <a href="/cadastrar-organizador">Organizador</a></p>
+      </section>
+    </main>
+  </div>
+
+  <script src="/js/menu.js" defer></script>
+  <script src="/js/login.js" defer></script>
 </body>
 </html>

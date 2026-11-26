@@ -40,3 +40,8 @@
 .nota, .link-conta { text-align: center; font-size: 12px; color: var(--muted); }
 .link-conta { margin-top: 16px; font-size: 13px; }
 .link-conta a { color: var(--accent); }
+.login-titulo { margin-bottom: 12px; font: 400 32px / 1.2 var(--font-display); }
+.aviso-ok { margin-bottom: 14px; padding: 8px 12px; border: 1px solid var(--accent); border-radius: 8px; font-size: 13px; color: var(--accent); }
+.aviso-ok[hidden] { display: none; }
+.painel-info { display: grid; gap: 6px; margin: 12px 0 20px; }
+.painel-info b { color: var(--accent); }

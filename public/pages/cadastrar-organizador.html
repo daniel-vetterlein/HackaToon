@@ -45,12 +45,11 @@
       </section>
 
       <section class="cadastro-card">
-        <div class="cadastro-topo"><span>CADASTRO DE ORGANIZADOR</span><span id="contador">1/2</span></div>
+        <div class="cadastro-topo"><span>CADASTRO DE ORGANIZADOR</span><span id="contador">1/1</span></div>
 
         <ol class="passos">
           <li class="passo ativo" data-passo><b>1</b> Dados do organizador</li>
-          <li class="passo" data-passo><b>2</b> Verificação em duas etapas</li>
-        </ol>
+                  </ol>
 
         <form data-cadastro data-api="/api/organizadores" novalidate>
           <div class="etapa" data-etapa>
@@ -80,37 +79,8 @@
               <input id="instituicao" name="instituicao" type="text" autocomplete="organization" required maxlength="120">
             </div>
 
-            <fieldset class="campo">
-              <legend>Verificação em duas etapas</legend>
-              <small>Como você prefere receber o código para confirmar seu acesso?</small>
-              <div class="opcoes">
-                <label class="opcao"><input type="radio" name="metodo" value="email" checked><strong>E-mail</strong><span>Código por e-mail</span></label>
-                <label class="opcao"><input type="radio" name="metodo" value="sms"><strong>Telefone</strong><span>Código por SMS</span></label>
-              </div>
-            </fieldset>
-
             <div class="acoes">
-              <button class="btn btn-primary comic-button" type="button" data-acao="avancar" data-api="/api/organizadores/codigo">
-                <span data-rotulo-metodo>Enviar código por e-mail</span>
-              </button>
-              <p class="nota">A seguir: digite o código para confirmar seu acesso.</p>
-            </div>
-          </div>
-
-          <!-- Passo 2: o original só mostra depois do passo 1; este texto é sugestão -->
-          <div class="etapa" data-etapa hidden>
-            <h2>CONFIRME SEU ACESSO</h2>
-            <p class="etapa-sub">Digite o código de 6 dígitos que enviamos para você.</p>
-
-            <div class="campo">
-              <label for="codigo">Código de verificação <span class="req">*</span></label>
-              <input id="codigo" name="codigo" type="text" inputmode="numeric" autocomplete="one-time-code" required pattern="[0-9]{6}" maxlength="6" title="Código de 6 dígitos">
-              <small>Não chegou? Volte e envie o código de novo.</small>
-            </div>
-
-            <div class="acoes">
-              <button class="btn btn-primary comic-button" type="submit">Confirmar e criar conta</button>
-              <button class="btn btn-outline" type="button" data-acao="voltar">Voltar</button>
+              <button class="btn btn-primary comic-button" type="submit">Concluir cadastro</button>
             </div>
           </div>
 

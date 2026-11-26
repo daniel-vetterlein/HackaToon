@@ -1,15 +1,8 @@
-const crypto = require('node:crypto');
 const db = require('../db');
 const { lerJson, json } = require('../utils/http');
 const { gerarHash } = require('../utils/senha');
-const envio = require('../services/envio');
-
-// Chave de controle do 2FA: defina EXIGIR_VERIFICACAO=true no .env (ou mude para true) para reativar
-const EXIGIR_VERIFICACAO = process.env.EXIGIR_VERIFICACAO === 'true';
 
 const REGEX_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const VALIDADE_MS = 10 * 60 * 1000;   // o código vale 10 minutos
-const MAX_TENTATIVAS = 5;
 
 function validar(corpo) {
   const nome = String(corpo.nome ?? '').trim();
@@ -27,14 +20,6 @@ function validar(corpo) {
   return { dados: { nome, email, telefone, senha, instituicao } };
 }
 
-const hashCodigo = (codigo) => crypto.createHash('sha256').update(codigo).digest('hex');
-
-function codigoConfere(codigo, hashGuardado) {
-  const a = Buffer.from(hashCodigo(codigo));
-  const b = Buffer.from(hashGuardado);
-  return a.length === b.length && crypto.timingSafeEqual(a, b);
-}
-
 async function lerCorpo(req, res) {
   try {
     return await lerJson(req);
@@ -44,68 +29,13 @@ async function lerCorpo(req, res) {
   }
 }
 
-// POST /api/organizadores/codigo: valida os dados e envia o código
-async function enviarCodigo(req, res) {
-  const corpo = await lerCorpo(req, res);
-  if (!corpo) return;
-
-  const { erro, dados } = validar(corpo);
-  if (erro) return json(res, 400, { erro });
-
-  const existe = db
-    .prepare('SELECT 1 FROM usuarios WHERE email = ? OR telefone = ?')
-    .get(dados.email, dados.telefone);
-  if (existe) return json(res, 409, { erro: 'E-mail ou telefone já cadastrado.' });
-
-  const metodo = corpo.metodo === 'sms' ? 'sms' : 'email';
-  const codigo = String(crypto.randomInt(0, 1000000)).padStart(6, '0');
-  const expira = new Date(Date.now() + VALIDADE_MS).toISOString();
-
-  db.prepare('DELETE FROM verificacoes WHERE email = ?').run(dados.email);
-  db.prepare('INSERT INTO verificacoes (email, codigo_hash, expira_em) VALUES (?, ?, ?)')
-    .run(dados.email, hashCodigo(codigo), expira);
-
-  try {
-    await envio.enviarCodigo({
-      metodo,
-      destino: metodo === 'sms' ? dados.telefone : dados.email,
-      codigo,
-    });
-  } catch (e) {
-    console.error('Falha ao enviar código:', e);
-    db.prepare('DELETE FROM verificacoes WHERE email = ?').run(dados.email);
-    return json(res, 502, { erro: 'Não foi possível enviar o código. Tente novamente.' });
-  }
-
-  json(res, 200, { ok: true });
-}
-
-// POST /api/organizadores: confere o código e cria a conta
+// POST /api/organizadores: cria a conta
 async function criar(req, res) {
   const corpo = await lerCorpo(req, res);
   if (!corpo) return;
 
   const { erro, dados } = validar(corpo);
   if (erro) return json(res, 400, { erro });
-
-  // Valida o código de 6 dígitos somente se o 2FA estiver ativo
-  if (EXIGIR_VERIFICACAO) {
-    const codigo = String(corpo.codigo ?? '').trim();
-    if (!/^\d{6}$/.test(codigo)) return json(res, 400, { erro: 'Digite o código de 6 dígitos.' });
-
-    const v = db.prepare('SELECT * FROM verificacoes WHERE email = ?').get(dados.email);
-    if (!v || new Date(v.expira_em) < new Date()) {
-      return json(res, 400, { erro: 'Código expirado. Volte e envie um novo.' });
-    }
-    if (v.tentativas >= MAX_TENTATIVAS) {
-      db.prepare('DELETE FROM verificacoes WHERE id = ?').run(v.id);
-      return json(res, 429, { erro: 'Muitas tentativas. Volte e envie um novo código.' });
-    }
-    if (!codigoConfere(codigo, v.codigo_hash)) {
-      db.prepare('UPDATE verificacoes SET tentativas = tentativas + 1 WHERE id = ?').run(v.id);
-      return json(res, 400, { erro: 'Código incorreto.' });
-    }
-  }
 
   const senhaHash = await gerarHash(dados.senha);
 
@@ -121,11 +51,7 @@ async function criar(req, res) {
     return json(res, 500, { erro: 'Erro interno ao cadastrar.' });
   }
 
-  // Remove o código usado após confirmar o cadastro
-  if (EXIGIR_VERIFICACAO) {
-    db.prepare('DELETE FROM verificacoes WHERE email = ?').run(dados.email);
-  }
   json(res, 201, { ok: true });
 }
 
-module.exports = { enviarCodigo, criar };
+module.exports = { criar };
