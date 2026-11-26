@@ -32,6 +32,74 @@ db.exec(`
     CREATE INDEX IF NOT EXISTS idx_sessoes_usuario ON sessoes(usuario_id);
 
     DROP TABLE IF EXISTS verificacoes;
+
+    CREATE TABLE IF NOT EXISTS eventos (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        nome TEXT NOT NULL,
+        descricao TEXT NOT NULL DEFAULT '',
+        codigo_equipe TEXT NOT NULL UNIQUE,
+        codigo_jurado TEXT NOT NULL UNIQUE,
+        criado_por INTEGER NOT NULL REFERENCES usuarios(id),
+        criado_em TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
+
+    -- organizadores/jurados que têm acesso ao evento (o criador também entra aqui)
+    CREATE TABLE IF NOT EXISTS evento_organizadores (
+        evento_id INTEGER NOT NULL REFERENCES eventos(id) ON DELETE CASCADE,
+        usuario_id INTEGER NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
+        criado_em TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY (evento_id, usuario_id)
+    );
+
+    CREATE TABLE IF NOT EXISTS cronograma (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        evento_id INTEGER NOT NULL REFERENCES eventos(id) ON DELETE CASCADE,
+        titulo TEXT NOT NULL,
+        inicio TEXT NOT NULL,
+        fim TEXT,
+        descricao TEXT NOT NULL DEFAULT ''
+    );
+
+    CREATE TABLE IF NOT EXISTS desafios (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        evento_id INTEGER NOT NULL REFERENCES eventos(id) ON DELETE CASCADE,
+        titulo TEXT NOT NULL,
+        descricao TEXT NOT NULL DEFAULT ''
+    );
+
+    CREATE TABLE IF NOT EXISTS equipes (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        evento_id INTEGER NOT NULL REFERENCES eventos(id) ON DELETE CASCADE,
+        nome TEXT NOT NULL,
+        codigo TEXT NOT NULL UNIQUE,
+        criado_por INTEGER NOT NULL REFERENCES usuarios(id),
+        criado_em TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        UNIQUE (evento_id, nome COLLATE NOCASE)
+    );
+
+    CREATE TABLE IF NOT EXISTS equipe_membros (
+        equipe_id INTEGER NOT NULL REFERENCES equipes(id) ON DELETE CASCADE,
+        usuario_id INTEGER NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
+        PRIMARY KEY (equipe_id, usuario_id)
+    );
+
+    CREATE TABLE IF NOT EXISTS projetos (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        equipe_id INTEGER NOT NULL UNIQUE REFERENCES equipes(id) ON DELETE CASCADE,
+        nome TEXT NOT NULL,
+        descricao TEXT NOT NULL DEFAULT '',
+        github TEXT NOT NULL DEFAULT '',
+        atualizado_em TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS avaliacoes (
+        projeto_id INTEGER NOT NULL REFERENCES projetos(id) ON DELETE CASCADE,
+        avaliador_id INTEGER NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
+        nota REAL NOT NULL CHECK (nota >= 0 AND nota <= 10),
+        comentario TEXT NOT NULL DEFAULT '',
+        atualizado_em TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY (projeto_id, avaliador_id)
+    );
 `);
 
 module.exports = db;

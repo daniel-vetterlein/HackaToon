@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Evento | HACKTOON</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bangers&family=Roboto:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/componentes.css">
+  <link rel="stylesheet" href="/css/formulario.css">
+  <link rel="stylesheet" href="/css/paginas/organizador.css">
+</head>
+<body>
+  <div class="site-page">
+    <div id="menu"></div>
+    <main class="area-main">
+      <a class="voltar" href="/organizador">← Meus eventos</a>
+      <h1 class="area-titulo" id="titulo">Evento</h1>
+      <p class="sub" id="descricao"></p>
+      <p class="form-erro" id="erro-geral" role="alert"></p>
+
+      <section class="cartao">
+        <h2>Códigos de acesso</h2>
+        <div class="codigos">
+          <div class="codigo-box">
+            <small>Código das EQUIPES (participantes)</small>
+            <code id="cod-equipe">—</code>
+          </div>
+          <div class="codigo-box">
+            <small>Código de JURADOS / organizadores</small>
+            <code id="cod-jurado">—</code>
+          </div>
+        </div>
+        <p class="sub">Organizadores presentes: <span id="orgs"></span></p>
+      </section>
+
+      <div class="grade-2">
+        <section class="cartao">
+          <h2>Cronograma</h2>
+          <ul id="lista-cron" class="lista"></ul>
+          <form id="form-cron" novalidate>
+            <div class="campo"><label for="c-titulo">Atividade</label>
+              <input id="c-titulo" type="text" required maxlength="120"></div>
+            <div class="linha">
+              <div class="campo"><label for="c-inicio">Início</label>
+                <input id="c-inicio" type="datetime-local" required></div>
+              <div class="campo"><label for="c-fim">Término (opcional)</label>
+                <input id="c-fim" type="datetime-local"></div>
+            </div>
+            <div class="campo"><label for="c-desc">Detalhes (opcional)</label>
+              <input id="c-desc" type="text" maxlength="500"></div>
+            <p class="form-erro" role="alert"></p>
+            <button class="btn btn-primary comic-button" type="submit">Adicionar ao cronograma</button>
+          </form>
+        </section>
+
+        <section class="cartao">
+          <h2>Desafios</h2>
+          <ul id="lista-des" class="lista"></ul>
+          <form id="form-des" novalidate>
+            <div class="campo"><label for="d-titulo">Título do desafio</label>
+              <input id="d-titulo" type="text" required maxlength="120"></div>
+            <div class="campo"><label for="d-desc">Descrição</label>
+              <textarea id="d-desc" rows="3" maxlength="2000"></textarea></div>
+            <p class="form-erro" role="alert"></p>
+            <button class="btn btn-primary comic-button" type="submit">Adicionar desafio</button>
+          </form>
+        </section>
+      </div>
+
+      <section class="cartao">
+        <h2>Projetos e avaliação</h2>
+        <p class="sub">Notas de 0 a 10. A média considera todas as avaliações dos jurados; você pode alterar a sua nota quando quiser.</p>
+        <div id="projetos" class="lista"></div>
+      </section>
+    </main>
+  </div>
+  <script src="/js/menu.js" defer></script>
+  <script src="/js/api.js" defer></script>
+  <script src="/js/organizador-evento.js" defer></script>
+</body>
+</html>

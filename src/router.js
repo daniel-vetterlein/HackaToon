@@ -4,6 +4,7 @@ const { usuarioDaRequisicao } = require('./utils/sessao');
 const participantes = require('./routes/participantes');
 const organizadores = require('./routes/organizadores');
 const auth = require('./routes/auth');
+const eventos = require('./routes/eventos');
 
 // acesso: 'publico' | 'logado' | 'organizador' | 'participante'
 // Handlers de rotas protegidas recebem (req, res, usuario).
@@ -13,14 +14,38 @@ const ROTAS = {
   'POST /api/login': { acesso: 'publico', fn: auth.login },
   'POST /api/logout': { acesso: 'publico', fn: auth.logout },
   'GET /api/me': { acesso: 'publico', fn: auth.eu },
+  ...eventos.rotas,
 };
+
+// Rotas com parâmetros (ex.: /api/x/:id) viram regex; os valores vão em req.params
+const PADROES = Object.entries(ROTAS)
+  .filter(([chave]) => chave.includes(':'))
+  .map(([chave, rota]) => {
+    const [metodo, caminho] = chave.split(' ');
+    const nomes = [];
+    const re = new RegExp('^' + caminho.replace(/:(\w+)/g, (_, n) => { nomes.push(n); return '(\\d+)'; }) + '$');
+    return { metodo, re, nomes, rota };
+  });
+
+function achar(metodo, caminho) {
+  const exata = ROTAS[`${metodo} ${caminho}`];
+  if (exata) return { rota: exata, params: {} };
+  for (const p of PADROES) {
+    if (p.metodo !== metodo) continue;
+    const m = p.re.exec(caminho);
+    if (m) return { rota: p.rota, params: Object.fromEntries(p.nomes.map((n, i) => [n, Number(m[i + 1])])) };
+  }
+  return null;
+}
 
 async function tratar(req, res) {
   const caminho = req.url.split('?')[0];
 
   if (caminho.startsWith('/api/')) {
-    const rota = ROTAS[`${req.method} ${caminho}`];
-    if (!rota) return json(res, 404, { erro: 'Rota não encontrada' });
+    const achada = achar(req.method, caminho);
+    if (!achada) return json(res, 404, { erro: 'Rota não encontrada' });
+    const { rota } = achada;
+    req.params = achada.params;
 
     // Defesa contra CSRF: escritas só aceitam JSON (formulários cross-site não conseguem enviar)
     if (req.method !== 'GET' && !String(req.headers['content-type'] || '').startsWith('application/json')) {
