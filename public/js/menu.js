@@ -17,6 +17,7 @@ async function carregarMenu() {
     document.body.insertAdjacentHTML('beforeend', htmlModal);
 
     await configurarSessao(alvo);
+    configurarNavMobile(alvo);
     configurarModal();
 
   } catch (erro) {
@@ -93,4 +94,22 @@ async function configurarSessao(alvo) {
 
     acoes.append(painel, botao);
   } catch { /* segue deslogado */ }
+}
+
+
+function configurarNavMobile(alvo) {
+  const botao = alvo.querySelector('#menu-toggle');
+  const nav = alvo.querySelector('#menu-nav');
+  if (!botao || !nav) return;
+
+  const definir = (aberto) => {
+    nav.classList.toggle('aberto', aberto);
+    botao.setAttribute('aria-expanded', String(aberto));
+    botao.setAttribute('aria-label', aberto ? 'Fechar menu' : 'Abrir menu');
+  };
+
+  botao.addEventListener('click', () => definir(!nav.classList.contains('aberto')));
+  nav.addEventListener('click', (e) => { if (e.target.closest('a')) definir(false); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') definir(false); });
+  window.matchMedia('(min-width: 861px)').addEventListener('change', () => definir(false));
 }

@@ -1,7 +1,7 @@
 {
   "name": "hackatoon",
   "version": "1.0.0",
-  "description": "",
+  "description": "Sistema de gestão de hackathons",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

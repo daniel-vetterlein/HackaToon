@@ -1,7 +1,7 @@
 .site-page { min-height: 100vh; display: flex; flex-direction: column; }
 
 /* cabeçalho */
-.site-header { border-bottom: 1px solid var(--border); }
+.site-header { position: relative; z-index: 50; border-bottom: 1px solid var(--border); }
 .header-inner {
   max-width: 1200px;
   margin: 0 auto;
@@ -40,9 +40,46 @@
 }
 .ticker strong { font: 400 25px / 1.5 var(--font-display); letter-spacing: 0.06em; }
 
+/* botão hambúrguer (só no celular) */
+.menu-toggle {
+  display: none;
+  flex-direction: column; justify-content: center; gap: 5px;
+  width: 40px; height: 40px; padding: 0 9px;
+  border: 1px solid var(--border); border-radius: 8px;
+  background: var(--surface); cursor: pointer;
+}
+.menu-toggle span { display: block; height: 2px; background: var(--fg); transition: transform 0.2s, opacity 0.2s; }
+.menu-toggle[aria-expanded='true'] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.menu-toggle[aria-expanded='true'] span:nth-child(2) { opacity: 0; }
+.menu-toggle[aria-expanded='true'] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+.menu-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
 @media (max-width: 860px) {
-  .reference-nav { display: none; }
-  .header-inner { padding: 16px 20px; }
+  .header-inner { padding: 14px 20px; gap: 12px; flex-wrap: wrap; }
+  .brand { font-size: 24px; margin-right: auto; }
+  .menu-toggle { display: flex; order: 3; }
+  .header-actions { order: 2; }
+  .reference-nav {
+    display: none; order: 4; flex-basis: 100%;
+    flex-direction: column; gap: 0;
+    margin: 4px -20px -14px; border-top: 1px solid var(--border); background: var(--bg);
+    font-size: 15px;
+  }
+  .reference-nav.aberto { display: flex; }
+  .reference-nav a { padding: 14px 20px; border-bottom: 1px solid var(--border); }
+  .reference-nav a:last-child { border-bottom: 0; }
+}
+@media (max-width: 480px) {
+  .header-inner { padding: 12px 14px; gap: 8px; }
+  .reference-nav { margin: 4px -14px -12px; }
+  .reference-nav a { padding: 14px; }
+  .brand { gap: 6px; font-size: 20px; }
+  .brand-icon { width: 28px; height: 28px; }
+  .header-actions { gap: 4px; }
+  .header-actions .btn { height: 34px; padding: 6px 9px; font-size: 13px; }
+  .menu-toggle { width: 36px; height: 36px; padding: 0 8px; }
+  .ticker { padding: 10px 16px; }
+  .ticker strong { font-size: 18px; text-align: center; }
 }
 
 /* modal de cadastro */
@@ -159,4 +196,8 @@
   .modal-opcoes {
     grid-template-columns: 1fr;
   }
+}
+@media (max-width: 380px) {
+  .brand-icon { display: none; }
+  .header-actions .btn { padding: 6px 8px; font-size: 12px; }
 }

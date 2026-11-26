@@ -5,6 +5,12 @@ const sessao = require('../utils/sessao');
 
 // Limite simples de tentativas por IP+e-mail (em memória): 8 falhas / 10 min
 const falhas = new Map();
+
+// Atrás do proxy do Railway, o IP real é o último valor de X-Forwarded-For (anexado pelo proxy)
+function ipCliente(req) {
+  const xff = String(req.headers['x-forwarded-for'] || '').split(',').map((v) => v.trim()).filter(Boolean);
+  return xff.length ? xff[xff.length - 1] : req.socket.remoteAddress;
+}
 const JANELA_MS = 10 * 60 * 1000;
 const MAX_FALHAS = 8;
 
@@ -32,7 +38,7 @@ async function login(req, res) {
   const senha = String(corpo.senha ?? '');
   if (!email || !senha || senha.length > 128) return json(res, 400, { erro: 'Informe e-mail e senha.' });
 
-  const chave = `${req.socket.remoteAddress}|${email.toLowerCase()}`;
+  const chave = `${ipCliente(req)}|${email.toLowerCase()}`;
   if (bloqueado(chave)) return json(res, 429, { erro: 'Muitas tentativas. Aguarde alguns minutos.' });
 
   const usuario = db.prepare('SELECT * FROM usuarios WHERE email = ?').get(email);

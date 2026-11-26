@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cronograma | HACKTOON</title>
+  <meta name="description" content="Etapas de um hackathon e o cronograma dos seus eventos.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bangers&family=Roboto:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/componentes.css">
+  <link rel="stylesheet" href="/css/paginas/institucional.css">
+</head>
+<body>
+  <div class="site-page">
+    <div id="menu"></div>
+    <main class="inst-main">
+      <section class="inst-hero">
+        <span class="eyebrow">CRONOGRAMA</span>
+        <h1>O ROTEIRO DO <em>HACKATHON.</em></h1>
+        <p>Estas são as etapas típicas de uma maratona. As datas e horários de cada evento são definidos pela organização e aparecem abaixo quando você está logado.</p>
+      </section>
+
+      <ol class="linha-tempo">
+        <li><small>ETAPA 1</small><strong>Abertura e desafios</strong><p>A organização apresenta o evento, as regras e os desafios.</p></li>
+        <li><small>ETAPA 2</small><strong>Formação de equipes</strong><p>Crie a sua equipe com o código do evento ou entre em uma existente.</p></li>
+        <li><small>ETAPA 3</small><strong>Desenvolvimento</strong><p>Hora de colocar a mão na massa e cadastrar o projeto com o link do GitHub.</p></li>
+        <li><small>ETAPA 4</small><strong>Apresentações e avaliação</strong><p>Os jurados avaliam os projetos com notas de 0 a 10.</p></li>
+        <li><small>ETAPA 5</small><strong>Resultado e premiação</strong><p>A média das notas define as equipes vencedoras.</p></li>
+      </ol>
+
+      <h2 class="inst-secao-titulo">SEUS <em>EVENTOS</em></h2>
+      <div id="eventos" class="inst-grade"></div>
+    </main>
+    <footer>
+      <div class="ticker">
+        <span>✦</span>
+        <strong>CONTAGEM REGRESSIVA ATIVADA!</strong>
+        <span>✦</span>
+      </div>
+    </footer>
+  </div>
+  <script src="/js/menu.js" defer></script>
+  <script src="/js/api.js" defer></script>
+  <script src="/js/cronograma.js" defer></script>
+</body>
+</html>
