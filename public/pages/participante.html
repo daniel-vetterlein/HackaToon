@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Área do participante | HACKTOON</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bangers&family=Roboto:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/componentes.css">
+  <link rel="stylesheet" href="/css/formulario.css">
+  <link rel="stylesheet" href="/css/paginas/organizador.css">
+</head>
+<body>
+  <div class="site-page">
+    <div id="menu"></div>
+    <main class="area-main">
+      <h1 class="area-titulo">MINHAS <em>EQUIPES</em></h1>
+
+      <div class="grade-2">
+        <section class="cartao">
+          <h2>Criar equipe</h2>
+          <p class="sub">Use o <strong>código do evento (equipes)</strong> passado pela organização. Vamos gerar o código da sua equipe para você convidar os colegas.</p>
+          <form id="form-criar" novalidate>
+            <div class="campo"><label for="codigo-evento">Código do evento</label>
+              <input id="codigo-evento" type="text" required maxlength="20" autocomplete="off" class="mono"></div>
+            <div class="campo"><label for="nome-equipe">Nome da equipe</label>
+              <input id="nome-equipe" type="text" required maxlength="80"></div>
+            <p class="form-erro" role="alert"></p>
+            <button class="btn btn-primary comic-button" type="submit">Criar equipe</button>
+          </form>
+        </section>
+
+        <section class="cartao">
+          <h2>Entrar em uma equipe</h2>
+          <p class="sub">Já tem a equipe? Basta o <strong>código da equipe</strong> que um colega compartilhou.</p>
+          <form id="form-entrar" novalidate>
+            <div class="campo"><label for="codigo-equipe">Código da equipe</label>
+              <input id="codigo-equipe" type="text" required maxlength="20" autocomplete="off" class="mono"></div>
+            <p class="form-erro" role="alert"></p>
+            <button class="btn btn-jurado comic-button" type="submit">Entrar na equipe</button>
+          </form>
+        </section>
+      </div>
+
+      <section class="cartao">
+        <h2>Suas equipes</h2>
+        <ul id="lista" class="lista"></ul>
+      </section>
+    </main>
+  </div>
+  <script src="/js/menu.js" defer></script>
+  <script src="/js/api.js" defer></script>
+  <script src="/js/participante.js" defer></script>
+</body>
+</html>

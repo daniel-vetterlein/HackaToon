@@ -1,15 +1,8 @@
-const crypto = require('node:crypto');
 const db = require('../db');
 const { lerJson, json } = require('../utils/http');
+const { gerarCodigo, normalizarCodigo } = require('../utils/codigo');
 
-const ALFABETO = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // sem I, O, 0, 1 (evita confusão)
 const REGEX_DATA = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/;
-
-function gerarCodigo(tamanho = 8) {
-  let c = '';
-  for (let i = 0; i < tamanho; i++) c += ALFABETO[crypto.randomInt(ALFABETO.length)];
-  return c;
-}
 
 function codigoLivre() {
   for (;;) {
@@ -82,7 +75,7 @@ async function criar(req, res, usuario) {
 async function entrar(req, res, usuario) {
   const c = await corpo(req, res);
   if (!c) return;
-  const codigo = texto(c.codigo, 20).toUpperCase().replace(/[\s-]/g, '');
+  const codigo = normalizarCodigo(c.codigo);
   const evento = db.prepare('SELECT id, nome FROM eventos WHERE codigo_jurado = ?').get(codigo);
   if (!evento) {
     const eDeEquipe = db.prepare('SELECT 1 FROM eventos WHERE codigo_equipe = ?').get(codigo);

@@ -5,6 +5,7 @@ const participantes = require('./routes/participantes');
 const organizadores = require('./routes/organizadores');
 const auth = require('./routes/auth');
 const eventos = require('./routes/eventos');
+const equipes = require('./routes/equipes');
 
 // acesso: 'publico' | 'logado' | 'organizador' | 'participante'
 // Handlers de rotas protegidas recebem (req, res, usuario).
@@ -15,6 +16,7 @@ const ROTAS = {
   'POST /api/logout': { acesso: 'publico', fn: auth.logout },
   'GET /api/me': { acesso: 'publico', fn: auth.eu },
   ...eventos.rotas,
+  ...equipes.rotas,
 };
 
 // Rotas com parâmetros (ex.: /api/x/:id) viram regex; os valores vão em req.params

@@ -29,6 +29,8 @@ const PAGINAS = {
   '/cadastrar-organizador': { arquivo: 'cadastrar-organizador.html', acesso: 'visitante' },
   '/cadastrar-participante': { arquivo: 'cadastrar-participante.html', acesso: 'visitante' },
   '/painel': { arquivo: 'painel.html', acesso: 'logado' },
+  '/participante': { arquivo: 'participante.html', acesso: 'participante' },
+  '/participante/equipe': { arquivo: 'participante-equipe.html', acesso: 'participante' },
   '/organizador': { arquivo: 'organizador.html', acesso: 'organizador' },
   '/organizador/evento': { arquivo: 'organizador-evento.html', acesso: 'organizador' },
 };

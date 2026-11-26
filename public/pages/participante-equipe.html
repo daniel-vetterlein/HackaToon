@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Equipe | HACKTOON</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bangers&family=Roboto:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/componentes.css">
+  <link rel="stylesheet" href="/css/formulario.css">
+  <link rel="stylesheet" href="/css/paginas/organizador.css">
+</head>
+<body>
+  <div class="site-page">
+    <div id="menu"></div>
+    <main class="area-main">
+      <a class="voltar" href="/participante">← Minhas equipes</a>
+      <h1 class="area-titulo" id="titulo">Equipe</h1>
+      <p class="sub" id="evento"></p>
+      <p class="form-erro" id="erro-geral" role="alert"></p>
+
+      <section class="cartao">
+        <h2>Equipe</h2>
+        <div class="codigos">
+          <div class="codigo-box">
+            <small>Código da EQUIPE (compartilhe com seus colegas)</small>
+            <code id="cod-equipe">—</code>
+          </div>
+          <div class="codigo-box">
+            <small>Integrantes</small>
+            <span id="membros"></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="cartao">
+        <h2>Projeto</h2>
+        <form id="form-projeto" novalidate>
+          <div class="campo"><label for="p-nome">Nome do projeto</label>
+            <input id="p-nome" type="text" required maxlength="120"></div>
+          <div class="campo"><label for="p-desc">Descrição</label>
+            <textarea id="p-desc" rows="5" maxlength="3000"></textarea></div>
+          <div class="campo"><label for="p-github">Link do GitHub</label>
+            <input id="p-github" type="url" maxlength="300" placeholder="https://github.com/usuario/repositorio"></div>
+          <p class="form-erro" role="alert"></p>
+          <button class="btn btn-primary comic-button" type="submit">Salvar projeto</button>
+        </form>
+      </section>
+
+      <div class="grade-2">
+        <section class="cartao">
+          <h2>Cronograma</h2>
+          <ul id="lista-cron" class="lista"></ul>
+        </section>
+        <section class="cartao">
+          <h2>Desafios</h2>
+          <ul id="lista-des" class="lista"></ul>
+        </section>
+      </div>
+    </main>
+  </div>
+  <script src="/js/menu.js" defer></script>
+  <script src="/js/api.js" defer></script>
+  <script src="/js/participante-equipe.js" defer></script>
+</body>
+</html>
