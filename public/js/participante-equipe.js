@@ -3,6 +3,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   const id = Number(new URLSearchParams(location.search).get('id'));
   const $ = (i) => document.getElementById(i);
   if (!id) return (location.href = '/participante');
+  let encerrado = false;
 
   try {
     const d = await api('GET', `/api/participante/equipes/${id}`);
@@ -11,6 +12,15 @@ window.addEventListener('DOMContentLoaded', async () => {
     $('evento').textContent = `Evento: ${d.evento.nome}${d.evento.descricao ? ' — ' + d.evento.descricao : ''}`;
     $('cod-equipe').textContent = d.equipe.codigo;
     $('membros').textContent = d.membros.join(', ');
+
+    if (d.evento.encerrado) {
+      encerrado = true;
+      $('aviso-encerrado').hidden = false;
+      $('sec-colocacoes').hidden = false;
+      $('colocacoes').replaceChildren(window.hk.renderColocacoes(d.colocacoes || []));
+      document.querySelectorAll('#form-projeto input, #form-projeto textarea, #form-projeto button').forEach((c) => (c.disabled = true));
+      $('btn-salvar').textContent = 'Evento encerrado';
+    }
 
     if (d.projeto) {
       $('p-nome').value = d.projeto.nome;
@@ -42,6 +52,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   form.addEventListener('submit', async (ev) => {
     ev.preventDefault();
     erro.textContent = '';
+    if (encerrado) return;
     if (!form.checkValidity()) return form.reportValidity();
     try {
       await api('PUT', `/api/participante/equipes/${id}/projeto`, {

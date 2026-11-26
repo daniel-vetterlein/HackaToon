@@ -10,7 +10,7 @@ window.addEventListener('DOMContentLoaded', () => {
       lista.append(el('li', { class: 'item' },
         el('div', {},
           el('strong', {}, e.nome),
-          el('small', {}, `${e.dono ? 'Criador' : 'Jurado/organizador'} · ${e.equipes} equipe(s)`)),
+          el('small', {}, `${e.dono ? 'Criador' : 'Jurado/organizador'} · ${e.equipes} equipe(s)${e.encerrado ? ' · ENCERRADO' : ''}`)),
         el('a', { class: 'btn btn-outline', href: `/organizador/evento?id=${e.id}` }, 'Abrir')));
     }
   }

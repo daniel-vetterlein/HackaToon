@@ -1,6 +1,7 @@
 const db = require('../db');
 const { lerJson, json } = require('../utils/http');
 const { gerarCodigo, normalizarCodigo } = require('../utils/codigo');
+const { colocacoes } = require('../utils/ranking');
 
 const REGEX_DATA = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/;
 
@@ -38,11 +39,11 @@ function eventoDoUsuario(req, res, usuario) {
 // GET /api/organizador/eventos
 function listar(req, res, usuario) {
   const eventos = db.prepare(`
-    SELECT e.id, e.nome, e.descricao, e.criado_por = ? AS dono,
+    SELECT e.id, e.nome, e.descricao, e.encerrado, e.criado_por = ? AS dono,
       (SELECT COUNT(*) FROM equipes q WHERE q.evento_id = e.id) AS equipes
     FROM eventos e JOIN evento_organizadores o ON o.evento_id = e.id
     WHERE o.usuario_id = ? ORDER BY e.id DESC`).all(usuario.id, usuario.id);
-  json(res, 200, { eventos: eventos.map((e) => ({ ...e, dono: !!e.dono })) });
+  json(res, 200, { eventos: eventos.map((e) => ({ ...e, dono: !!e.dono, encerrado: !!e.encerrado })) });
 }
 
 // POST /api/organizador/eventos  { nome, descricao }
@@ -107,9 +108,10 @@ function detalhe(req, res, usuario) {
     evento: {
       id: e.id, nome: e.nome, descricao: e.descricao,
       codigo_equipe: e.codigo_equipe, codigo_jurado: e.codigo_jurado,
-      dono: e.criado_por === usuario.id,
+      dono: e.criado_por === usuario.id, encerrado: !!e.encerrado,
     },
     cronograma, desafios, organizadores,
+    colocacoes: e.encerrado ? colocacoes(e.id) : null,
   });
 }
 
@@ -212,6 +214,18 @@ async function avaliar(req, res, usuario) {
   json(res, 200, { nota: arredondada, media: r.media, avaliacoes: r.avaliacoes });
 }
 
+// PUT /api/organizador/eventos/:id/encerramento  { encerrado: true|false }
+// Qualquer organizador do evento pode encerrar ou reabrir (reversível).
+async function encerramento(req, res, usuario) {
+  const e = eventoDoUsuario(req, res, usuario);
+  if (!e) return;
+  const c = await corpo(req, res);
+  if (!c) return;
+  if (typeof c.encerrado !== 'boolean') return json(res, 400, { erro: 'Informe encerrado: true ou false.' });
+  db.prepare('UPDATE eventos SET encerrado = ? WHERE id = ?').run(c.encerrado ? 1 : 0, e.id);
+  json(res, 200, { encerrado: c.encerrado });
+}
+
 const P = '/api/organizador/eventos';
 const org = (fn) => ({ acesso: 'organizador', fn });
 
@@ -225,6 +239,7 @@ module.exports = {
     [`DELETE ${P}/:id/cronograma/:item`]: org(delCronograma),
     [`POST ${P}/:id/desafios`]: org(addDesafio),
     [`DELETE ${P}/:id/desafios/:item`]: org(delDesafio),
+    [`PUT ${P}/:id/encerramento`]: org(encerramento),
     [`GET ${P}/:id/projetos`]: org(projetos),
     [`PUT ${P}/:id/projetos/:projeto/avaliacao`]: org(avaliar),
   },

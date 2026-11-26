@@ -14,6 +14,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     $('descricao').textContent = d.evento.descricao;
     $('cod-equipe').textContent = d.evento.codigo_equipe;
     $('cod-jurado').textContent = d.evento.codigo_jurado;
+    aplicarEstado(d.evento.encerrado, d.colocacoes);
     $('orgs').textContent = d.organizadores.map((o) => o.nome).join(', ');
 
     const cron = $('lista-cron');
@@ -37,6 +38,30 @@ window.addEventListener('DOMContentLoaded', async () => {
         el('button', { class: 'btn btn-outline', type: 'button', onclick: () => remover('desafios', x.id) }, 'Remover')));
     }
   }
+
+  function aplicarEstado(encerrado, colocacoes) {
+    $('selo').textContent = encerrado ? 'ENCERRADO' : 'ABERTO';
+    $('selo').classList.toggle('encerrado', encerrado);
+    $('btn-encerrar').textContent = encerrado ? 'Reabrir evento' : 'Encerrar evento';
+    $('btn-encerrar').className = encerrado ? 'btn btn-outline' : 'btn btn-perigo';
+    $('btn-encerrar').dataset.encerrado = encerrado ? '1' : '0';
+    $('aviso-encerrado').hidden = !encerrado;
+    $('sec-colocacoes').hidden = !encerrado;
+    $('colocacoes').replaceChildren(...(encerrado && colocacoes ? [window.hk.renderColocacoes(colocacoes)] : []));
+  }
+
+  $('btn-encerrar').addEventListener('click', async () => {
+    const encerrar = $('btn-encerrar').dataset.encerrado !== '1';
+    const msg = encerrar
+      ? 'Encerrar o evento? Os participantes não poderão mais editar projetos e verão as notas e colocações.'
+      : 'Reabrir o evento? Os participantes poderão editar projetos novamente e as notas voltarão a ficar ocultas.';
+    if (!window.confirm(msg)) return;
+    $('erro-geral').textContent = '';
+    try {
+      await api('PUT', `${base}/encerramento`, { encerrado: encerrar });
+      await carregarEvento();
+    } catch (e) { $('erro-geral').textContent = e.message; }
+  });
 
   async function remover(tipo, item) {
     try { await api('DELETE', `${base}/${tipo}/${item}`); await carregarEvento(); }

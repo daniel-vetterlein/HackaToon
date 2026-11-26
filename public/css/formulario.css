@@ -19,12 +19,16 @@
 .campo { display: grid; gap: 6px; margin-bottom: 14px; border: 0; }
 .campo label, .campo legend { font-size: 13px; font-weight: 500; }
 .req { color: var(--accent); }
-.campo input[type='text'], .campo input[type='email'], .campo input[type='tel'], .campo input[type='password'] {
-  height: 40px; padding: 0 12px;
+.campo input:not([type='checkbox']):not([type='radio']):not([type='hidden']), .campo textarea, .campo select {
+  width: 100%; padding: 0 12px;
   border: 1px solid var(--border); border-radius: 8px;
-  background: var(--bg); color: var(--fg); font: 14px var(--font-body);
+  background: var(--bg); color: var(--fg); font: 14px var(--font-body); color-scheme: dark;
 }
-.campo input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+.campo input:not([type='checkbox']):not([type='radio']), .campo select { height: 40px; }
+.campo textarea { min-height: 96px; padding: 10px 12px; line-height: 1.5; resize: vertical; }
+.campo input::placeholder, .campo textarea::placeholder { color: var(--muted); opacity: 0.7; }
+.campo input:disabled, .campo textarea:disabled { opacity: 0.6; cursor: not-allowed; }
+.campo textarea:focus, .campo select:focus, .campo input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
 .campo small { font-size: 12px; color: var(--muted); }
 
 .opcoes { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }

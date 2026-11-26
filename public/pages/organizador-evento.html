@@ -18,8 +18,15 @@
     <div id="menu"></div>
     <main class="area-main">
       <a class="voltar" href="/organizador">← Meus eventos</a>
-      <h1 class="area-titulo" id="titulo">Evento</h1>
+      <div class="titulo-linha">
+        <h1 class="area-titulo" id="titulo">Evento</h1>
+        <div class="titulo-linha">
+          <span class="selo" id="selo">ABERTO</span>
+          <button class="btn btn-perigo" id="btn-encerrar" type="button">Encerrar evento</button>
+        </div>
+      </div>
       <p class="sub" id="descricao"></p>
+      <p class="aviso-box" id="aviso-encerrado" hidden>Evento encerrado: o envio e a edição de projetos estão bloqueados e as notas e colocações estão liberadas para os participantes. Você pode reabrir o evento a qualquer momento.</p>
       <p class="form-erro" id="erro-geral" role="alert"></p>
 
       <section class="cartao">
@@ -70,6 +77,11 @@
           </form>
         </section>
       </div>
+
+      <section class="cartao" id="sec-colocacoes" hidden>
+        <h2>Colocações finais</h2>
+        <div id="colocacoes"></div>
+      </section>
 
       <section class="cartao">
         <h2>Projetos e avaliação</h2>

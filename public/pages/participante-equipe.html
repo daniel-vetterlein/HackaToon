@@ -21,6 +21,12 @@
       <h1 class="area-titulo" id="titulo">Equipe</h1>
       <p class="sub" id="evento"></p>
       <p class="form-erro" id="erro-geral" role="alert"></p>
+      <p class="aviso-box" id="aviso-encerrado" hidden>Este evento foi encerrado. O envio e a edição de projetos estão bloqueados, e as colocações finais estão disponíveis abaixo.</p>
+
+      <section class="cartao" id="sec-colocacoes" hidden>
+        <h2>Colocações finais</h2>
+        <div id="colocacoes"></div>
+      </section>
 
       <section class="cartao">
         <h2>Equipe</h2>
@@ -46,7 +52,7 @@
           <div class="campo"><label for="p-github">Link do GitHub</label>
             <input id="p-github" type="url" maxlength="300" placeholder="https://github.com/usuario/repositorio"></div>
           <p class="form-erro" role="alert"></p>
-          <button class="btn btn-primary comic-button" type="submit">Salvar projeto</button>
+          <button class="btn btn-primary comic-button" id="btn-salvar" type="submit">Salvar projeto</button>
         </form>
       </section>
 

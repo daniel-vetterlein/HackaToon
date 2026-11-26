@@ -102,4 +102,9 @@ db.exec(`
     );
 `);
 
+// Migração: bancos criados antes do encerramento de evento não têm a coluna
+if (!db.prepare('PRAGMA table_info(eventos)').all().some((c) => c.name === 'encerrado')) {
+  db.exec('ALTER TABLE eventos ADD COLUMN encerrado INTEGER NOT NULL DEFAULT 0');
+}
+
 module.exports = db;
