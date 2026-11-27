@@ -35,7 +35,7 @@ window.hk = {
     const avaliadas = lista.filter((c) => c.posicao != null);
 
     const degrau = (c) => el('div', { class: `degrau pos-${c.posicao}`, role: 'listitem' },
-      el('span', { class: 'medalha' }, `${c.posicao}º`),
+      el('span', { class: 'medalha', 'aria-label': `${c.posicao}º lugar` }, String(c.posicao)),
       el('strong', {}, c.equipe),
       el('small', {}, c.projeto || 'Sem projeto'),
       el('span', { class: 'media' }, fmtNota(c.media)));
