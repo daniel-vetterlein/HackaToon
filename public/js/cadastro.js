@@ -23,12 +23,16 @@
       : `+55 ${d.slice(0, 2)} ${resto}`;
   };
   if (telefone) {
-    telefone.value = formatarTelefone(telefone.value);
     telefone.addEventListener('input', () => {
       const f = formatarTelefone(telefone.value);
       if (f !== telefone.value) telefone.value = f;
     });
+    // vazio: mostra o exemplo (placeholder); ao focar entra o +55 fixo
+    telefone.addEventListener('blur', () => {
+      if (telefone.value.replace(/\D/g, '') === '55') telefone.value = '';
+    });
     telefone.addEventListener('focus', () => {
+      if (!telefone.value) telefone.value = '+55 ';
       const fim = telefone.value.length;
       requestAnimationFrame(() => telefone.setSelectionRange(fim, fim));
     });
