@@ -8,21 +8,29 @@
   const erro = form.querySelector('.form-erro');
   let atual = 0;
 
-  // Máscara do telefone: "41 99999-9999" (ou "41 9999-9999"); o servidor guarda só os dígitos
+  // Máscara do telefone: sempre "+55 DD 99999-9999" (ou "+55 DD 9999-9999"); o servidor guarda só os dígitos
   const telefone = form.elements.telefone;
   const formatarTelefone = (valor) => {
     let d = String(valor).replace(/\D/g, '');
-    if (d.length > 11 && d.startsWith('55')) d = d.slice(2); // colou com +55
+    if (d.startsWith('55')) d = d.slice(2); // o +55 é fixo
     d = d.slice(0, 11);
-    if (d.length <= 2) return d;
+    if (d.length === 0) return '+55 ';
+    if (d.length <= 2) return `+55 ${d}`;
     const resto = d.slice(2);
     const corte = d.length === 11 ? 5 : 4;
-    return resto.length > corte ? `${d.slice(0, 2)} ${resto.slice(0, corte)}-${resto.slice(corte)}` : `${d.slice(0, 2)} ${resto}`;
+    return resto.length > corte
+      ? `+55 ${d.slice(0, 2)} ${resto.slice(0, corte)}-${resto.slice(corte)}`
+      : `+55 ${d.slice(0, 2)} ${resto}`;
   };
   if (telefone) {
+    telefone.value = formatarTelefone(telefone.value);
     telefone.addEventListener('input', () => {
       const f = formatarTelefone(telefone.value);
       if (f !== telefone.value) telefone.value = f;
+    });
+    telefone.addEventListener('focus', () => {
+      const fim = telefone.value.length;
+      requestAnimationFrame(() => telefone.setSelectionRange(fim, fim));
     });
   }
 

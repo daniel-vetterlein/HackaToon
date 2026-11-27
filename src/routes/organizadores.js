@@ -14,7 +14,7 @@ function validar(corpo) {
 
   if (nome.length < 2 || nome.length > 120) return { erro: 'Informe seu nome completo.' };
   if (!REGEX_EMAIL.test(email) || email.length > 160) return { erro: 'Informe um e-mail válido.' };
-  if (!telefone) return { erro: 'Informe o telefone com DDD (10 ou 11 dígitos).' };
+  if (!telefone) return { erro: 'Informe o telefone com +55, DDD e número.' };
   if (senha.length < 8 || senha.length > 128) return { erro: 'A senha deve ter de 8 a 128 caracteres.' };
   if (instituicao.length < 2 || instituicao.length > 120) return { erro: 'Informe sua instituição.' };
 

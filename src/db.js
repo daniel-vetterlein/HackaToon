@@ -107,4 +107,7 @@ if (!db.prepare('PRAGMA table_info(eventos)').all().some((c) => c.name === 'ence
   db.exec('ALTER TABLE eventos ADD COLUMN encerrado INTEGER NOT NULL DEFAULT 0');
 }
 
+// Migração: telefones antigos eram guardados sem o código do país (55)
+db.exec("UPDATE usuarios SET telefone = '55' || telefone WHERE length(telefone) IN (10, 11)");
+
 module.exports = db;
