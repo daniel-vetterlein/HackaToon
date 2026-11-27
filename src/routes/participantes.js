@@ -1,18 +1,19 @@
 const db = require('../db');
 const { lerJson, json } = require('../utils/http');
 const { gerarHash } = require('../utils/senha');
+const { normalizarTelefone } = require('../utils/telefone');
 
 const REGEX_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function validar(corpo) {
   const nome = String(corpo.nome ?? '').trim();
   const email = String(corpo.email ?? '').trim();
-  const telefone = String(corpo.telefone ?? '').replace(/\D/g, ''); // só dígitos
+  const telefone = normalizarTelefone(corpo.telefone);
   const senha = String(corpo.senha ?? '');
 
   if (nome.length < 2 || nome.length > 120) return { erro: 'Informe seu nome completo.' };
   if (!REGEX_EMAIL.test(email) || email.length > 160) return { erro: 'Informe um e-mail válido.' };
-  if (telefone.length < 10 || telefone.length > 13) return { erro: 'Informe o telefone com DDD.' };
+  if (!telefone) return { erro: 'Informe o telefone com DDD (10 ou 11 dígitos).' };
   if (senha.length < 8 || senha.length > 128) return { erro: 'A senha deve ter de 8 a 128 caracteres.' };
 
   return { dados: { nome, email, telefone, senha } };
