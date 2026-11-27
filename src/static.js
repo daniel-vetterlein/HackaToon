@@ -32,7 +32,7 @@ const PAGINAS = {
   '/cronograma': { arquivo: 'cronograma.html', acesso: 'publico' },
   '/sobre': { arquivo: 'sobre.html', acesso: 'publico' },
   '/duvidas': { arquivo: 'duvidas.html', acesso: 'publico' },
-  '/apoiadores': { arquivo: 'apoiadores.html', acesso: 'publico' },
+  '/lgpd': { arquivo: 'lgpd.html', acesso: 'publico' },
   '/painel': { arquivo: 'painel.html', acesso: 'logado' },
   '/participante': { arquivo: 'participante.html', acesso: 'participante' },
   '/participante/equipe': { arquivo: 'participante-equipe.html', acesso: 'participante' },
