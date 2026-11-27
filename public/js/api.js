@@ -26,6 +26,39 @@ window.hk = {
     const [a, m, dia] = d.split('-');
     return `${dia}/${m}/${a} ${h}`;
   },
+  // Copia texto e dá feedback no botão ("Copiado!")
+  async copiar(texto, botao) {
+    try {
+      await navigator.clipboard.writeText(texto);
+    } catch {
+      const t = document.createElement('textarea'); // fallback p/ contextos sem Clipboard API
+      t.value = texto; t.style.position = 'fixed'; t.style.opacity = '0';
+      document.body.appendChild(t); t.select();
+      try { document.execCommand('copy'); } finally { t.remove(); }
+    }
+    if (!botao) return;
+    const original = botao.dataset.rotulo || (botao.dataset.rotulo = botao.textContent);
+    botao.textContent = 'Copiado!';
+    botao.classList.add('copiado');
+    clearTimeout(botao._t);
+    botao._t = setTimeout(() => { botao.textContent = original; botao.classList.remove('copiado'); }, 1600);
+  },
+  // Tela "guarde seu código de recuperação" (exibido uma única vez)
+  painelCodigoRecuperacao({ titulo, codigo, textoBotao, destino }) {
+    const { el } = window.hk;
+    const check = el('input', { type: 'checkbox', id: 'anotei' });
+    const continuar = el('button', { class: 'btn btn-primary comic-button', type: 'button', disabled: true,
+      onclick: () => { location.href = destino; } }, textoBotao);
+    check.addEventListener('change', () => { continuar.disabled = !check.checked; });
+    return el('div', { class: 'painel-codigo' },
+      el('h2', { class: 'login-titulo' }, titulo),
+      el('p', { class: 'etapa-sub' }, 'Este código permite redefinir sua senha caso você a esqueça. Ele aparece somente agora e não poderá ser consultado depois — anote ou copie em um lugar seguro.'),
+      el('div', { class: 'codigo-recuperacao' },
+        el('code', { id: 'codigo-rec' }, codigo),
+        el('button', { class: 'btn-copiar', type: 'button', 'data-copiar': 'codigo-rec' }, 'Copiar')),
+      el('label', { class: 'confirma-codigo', for: 'anotei' }, check, 'Guardei meu código de recuperação'),
+      el('div', { class: 'acoes' }, continuar));
+  },
   fmtNota(n) {
     return n == null ? '—' : Number(n).toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 2 });
   },
@@ -63,3 +96,10 @@ window.hk = {
   },
 };
 
+// Qualquer botão com data-copiar="id-do-elemento" copia o texto desse elemento
+document.addEventListener('click', (ev) => {
+  const botao = ev.target.closest('[data-copiar]');
+  if (!botao) return;
+  const alvo = document.getElementById(botao.dataset.copiar);
+  if (alvo) window.hk.copiar(alvo.textContent.trim(), botao);
+});

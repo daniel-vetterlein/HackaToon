@@ -14,6 +14,7 @@ const ROTAS = {
   'POST /api/participantes': { acesso: 'publico', fn: participantes.criar },
   'POST /api/organizadores': { acesso: 'publico', fn: organizadores.criar },
   'POST /api/login': { acesso: 'publico', fn: auth.login },
+  'POST /api/recuperar-senha': { acesso: 'publico', fn: auth.recuperarSenha },
   'POST /api/logout': { acesso: 'publico', fn: auth.logout },
   'GET /api/me': { acesso: 'publico', fn: auth.eu },
   ...eventos.rotas,

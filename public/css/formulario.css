@@ -60,3 +60,15 @@
 .btn-olho svg { width: 20px; height: 20px; }
 .btn-olho:hover, .btn-olho[aria-pressed='true'] { color: var(--accent); }
 .btn-olho:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+
+/* botão copiar + código de recuperação */
+.btn-copiar { justify-self: start; height: 30px; padding: 0 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); color: var(--fg); font: 500 12px var(--font-body); cursor: pointer; transition: background-color 0.15s, color 0.15s, border-color 0.15s; }
+.btn-copiar:hover { border-color: var(--accent); }
+.btn-copiar:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.btn-copiar.copiado { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+.codigo-recuperacao { display: grid; gap: 10px; justify-items: start; margin: 14px 0; padding: 16px; border: 2px dashed var(--accent); border-radius: 12px; background: var(--bg); }
+.codigo-recuperacao code { font: 500 clamp(18px, 4.6vw, 26px) var(--font-mono); letter-spacing: 2px; color: var(--accent); user-select: all; overflow-wrap: anywhere; }
+.confirma-codigo { display: flex; align-items: center; gap: 8px; margin: 12px 0; font-size: 13px; cursor: pointer; }
+.confirma-codigo input { width: 18px; height: 18px; accent-color: var(--accent); }
+.link-esqueci { text-align: right; margin: -6px 0 10px; font-size: 12px; }
+.link-esqueci a { color: var(--accent); }

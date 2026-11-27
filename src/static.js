@@ -26,6 +26,7 @@ const TIPOS = {
 const PAGINAS = {
   '/': { arquivo: 'index.html', acesso: 'publico' },
   '/login': { arquivo: 'login.html', acesso: 'visitante' },
+  '/recuperar-senha': { arquivo: 'recuperar-senha.html', acesso: 'visitante' },
   '/cadastrar-organizador': { arquivo: 'cadastrar-organizador.html', acesso: 'visitante' },
   '/cadastrar-participante': { arquivo: 'cadastrar-participante.html', acesso: 'visitante' },
   '/cronograma': { arquivo: 'cronograma.html', acesso: 'publico' },

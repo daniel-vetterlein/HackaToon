@@ -67,3 +67,10 @@
   .area-main { padding: 24px 16px; }
   .grade-2, .codigos, .linha { grid-template-columns: 1fr; }
 }
+
+.membros { display: grid; gap: 8px; list-style: none; }
+.membros li { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
+.membros .tag { margin-left: 6px; font: 500 10px var(--font-mono); color: var(--accent); }
+.btn-mini { height: 28px; padding: 0 10px; font-size: 12px; }
+.desafio-tag { font: 500 11px var(--font-mono); color: var(--purple); }
+.avalia.travado { opacity: 0.6; }

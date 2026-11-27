@@ -174,6 +174,7 @@ function projetos(req, res, usuario) {
       (SELECT GROUP_CONCAT(u.nome, ', ') FROM equipe_membros m JOIN usuarios u ON u.id = m.usuario_id
         WHERE m.equipe_id = q.id) AS membros,
       p.id AS projeto_id, p.nome AS projeto, p.descricao, p.github,
+      (SELECT d.titulo FROM desafios d WHERE d.id = p.desafio_id) AS desafio,
       (SELECT ROUND(AVG(nota), 2) FROM avaliacoes a WHERE a.projeto_id = p.id) AS media,
       (SELECT COUNT(*) FROM avaliacoes a WHERE a.projeto_id = p.id) AS avaliacoes,
       (SELECT nota FROM avaliacoes a WHERE a.projeto_id = p.id AND a.avaliador_id = ?) AS minha_nota,
@@ -188,6 +189,9 @@ function projetos(req, res, usuario) {
 async function avaliar(req, res, usuario) {
   const e = eventoDoUsuario(req, res, usuario);
   if (!e) return;
+  if (e.encerrado) {
+    return json(res, 403, { erro: 'O evento está encerrado: as notas estão travadas. Reabra o evento para alterá-las.' });
+  }
   const c = await corpo(req, res);
   if (!c) return;
 

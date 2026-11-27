@@ -6,6 +6,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   const fmtNota = (n) => (n == null ? '—' : Number(n).toLocaleString('pt-BR', { maximumFractionDigits: 2 }));
 
   if (!id) return (location.href = '/organizador');
+  let eventoEncerrado = false;
 
   async function carregarEvento() {
     const d = await api('GET', base);
@@ -40,6 +41,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   }
 
   function aplicarEstado(encerrado, colocacoes) {
+    eventoEncerrado = encerrado;
     $('selo').textContent = encerrado ? 'ENCERRADO' : 'ABERTO';
     $('selo').classList.toggle('encerrado', encerrado);
     $('btn-encerrar').textContent = encerrado ? 'Reabrir evento' : 'Encerrar evento';
@@ -60,11 +62,12 @@ window.addEventListener('DOMContentLoaded', async () => {
     try {
       await api('PUT', `${base}/encerramento`, { encerrado: encerrar });
       await carregarEvento();
+      await carregarProjetos();
     } catch (e) { $('erro-geral').textContent = e.message; }
   });
 
   async function remover(tipo, item) {
-    try { await api('DELETE', `${base}/${tipo}/${item}`); await carregarEvento(); }
+    try { await api('DELETE', `${base}/${tipo}/${item}`); await carregarEvento(); await carregarProjetos(); }
     catch (e) { $('erro-geral').textContent = e.message; }
   }
 
@@ -81,7 +84,9 @@ window.addEventListener('DOMContentLoaded', async () => {
     const erro = el('p', { class: 'form-erro', role: 'alert' });
     const resumo = el('span', { class: 'media' }, `Média: ${fmtNota(p.media)} (${p.avaliacoes} avaliação(ões))`);
 
-    const form = el('form', { class: 'avalia', novalidate: true,
+    const travado = eventoEncerrado;
+    nota.disabled = travado; coment.disabled = travado;
+    const form = el('form', { class: travado ? 'avalia travado' : 'avalia', novalidate: true,
       onsubmit: async (ev) => {
         ev.preventDefault();
         erro.textContent = '';
@@ -93,11 +98,13 @@ window.addEventListener('DOMContentLoaded', async () => {
         } catch (e) { erro.textContent = e.message; }
       } },
       el('label', {}, 'Sua nota (0–10) ', nota), coment,
-      el('button', { class: 'btn btn-primary comic-button', type: 'submit' }, p.minha_nota == null ? 'Avaliar' : 'Atualizar nota'));
+      el('button', { class: 'btn btn-primary comic-button', type: 'submit', disabled: travado },
+        travado ? 'Notas travadas' : (p.minha_nota == null ? 'Avaliar' : 'Atualizar nota')));
 
     return el('div', { class: 'projeto' },
       el('div', { class: 'projeto-topo' }, el('strong', {}, p.projeto), resumo),
       el('small', {}, `Equipe ${p.equipe}${p.membros ? ' · ' + p.membros : ''}`),
+      p.desafio && el('span', { class: 'desafio-tag' }, `DESAFIO: ${p.desafio}`),
       p.descricao && el('p', {}, p.descricao),
       p.github && /^https?:\/\//i.test(p.github) && el('a', { href: p.github, target: '_blank', rel: 'noopener noreferrer' }, p.github),
       form, erro);

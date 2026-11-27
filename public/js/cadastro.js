@@ -91,12 +91,12 @@
       const corpo = await resp.json().catch(() => ({}));
       if (!resp.ok) {
         definirErro(corpo.erro || 'Não foi possível concluir o cadastro.');
-        return false;
+        return null;
       }
-      return true;
+      return corpo;
     } catch {
       definirErro('Sem conexão com o servidor.');
-      return false;
+      return null;
     }
   }
 
@@ -117,10 +117,22 @@
 
     const botao = ev.submitter || form.querySelector('[type="submit"]');
     if (botao) botao.disabled = true;
-    const ok = await enviar(form.dataset.api);
+    const resposta = await enviar(form.dataset.api);
     if (botao) botao.disabled = false;
+    if (!resposta) return;
 
-    if (ok) location.href = '/login?cadastro=ok';
+    // Conta criada: exibe o código de recuperação (uma única vez) antes de ir ao login
+    const card = form.closest('.cadastro-card');
+    if (resposta.codigo_recuperacao && card && window.hk) {
+      card.replaceChildren(window.hk.painelCodigoRecuperacao({
+        titulo: 'CONTA CRIADA!',
+        codigo: resposta.codigo_recuperacao,
+        textoBotao: 'Continuar para o login',
+        destino: '/login?cadastro=ok',
+      }));
+    } else {
+      location.href = '/login?cadastro=ok';
+    }
   });
 
   mostrar(0);

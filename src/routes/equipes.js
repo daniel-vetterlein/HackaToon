@@ -100,21 +100,22 @@ function detalhe(req, res, usuario) {
   const evento = db.prepare('SELECT id, nome, descricao, encerrado FROM eventos WHERE id = ?').get(eq.evento_id);
   const encerrado = !!evento.encerrado;
   const membros = db.prepare(`
-    SELECT u.nome FROM equipe_membros m JOIN usuarios u ON u.id = m.usuario_id
-    WHERE m.equipe_id = ? ORDER BY u.nome`).all(eq.id).map((m) => m.nome);
+    SELECT u.id, u.nome FROM equipe_membros m JOIN usuarios u ON u.id = m.usuario_id
+    WHERE m.equipe_id = ? ORDER BY m.rowid`).all(eq.id)
+    .map((m) => ({ id: m.id, nome: m.nome, voce: m.id === usuario.id, criador: m.id === eq.criado_por }));
   const cronograma = db.prepare(
     'SELECT id, titulo, inicio, fim, descricao FROM cronograma WHERE evento_id = ? ORDER BY inicio, id'
   ).all(eq.evento_id);
   const desafios = db.prepare(
     'SELECT id, titulo, descricao FROM desafios WHERE evento_id = ? ORDER BY id'
   ).all(eq.evento_id);
-  const projeto = db.prepare('SELECT nome, descricao, github FROM projetos WHERE equipe_id = ?').get(eq.id) || null;
+  const projeto = db.prepare('SELECT nome, descricao, github, desafio_id FROM projetos WHERE equipe_id = ?').get(eq.id) || null;
   // Notas e ranking só são liberados após o encerramento do evento
   json(res, 200, {
     equipe: { id: eq.id, nome: eq.nome, codigo: eq.codigo },
     evento: { ...evento, encerrado },
     colocacoes: encerrado ? colocacoes(eq.evento_id) : null,
-    membros, cronograma, desafios, projeto,
+    membros, sou_criador: eq.criado_por === usuario.id, cronograma, desafios, projeto,
   });
 }
 
@@ -135,11 +136,68 @@ async function salvarProjeto(req, res, usuario) {
   if (github && !REGEX_GITHUB.test(github)) {
     return json(res, 400, { erro: 'O link deve ser um endereço do GitHub (https://github.com/usuario/repositorio).' });
   }
+
+  // Desafio opcional: precisa ser um desafio cadastrado neste mesmo evento
+  let desafioId = null;
+  if (c.desafio_id !== undefined && c.desafio_id !== null && c.desafio_id !== '') {
+    const d = db.prepare('SELECT id FROM desafios WHERE id = ? AND evento_id = ?').get(Number(c.desafio_id), eq.evento_id);
+    if (!d) return json(res, 400, { erro: 'Desafio inválido para este evento.' });
+    desafioId = d.id;
+  }
+
   db.prepare(`
-    INSERT INTO projetos (equipe_id, nome, descricao, github) VALUES (?, ?, ?, ?)
+    INSERT INTO projetos (equipe_id, nome, descricao, github, desafio_id) VALUES (?, ?, ?, ?, ?)
     ON CONFLICT (equipe_id)
     DO UPDATE SET nome = excluded.nome, descricao = excluded.descricao, github = excluded.github,
-                  atualizado_em = CURRENT_TIMESTAMP`).run(eq.id, nome, descricao, github);
+                  desafio_id = excluded.desafio_id, atualizado_em = CURRENT_TIMESTAMP`
+  ).run(eq.id, nome, descricao, github, desafioId);
+  json(res, 200, { ok: true });
+}
+
+// Remove um integrante; se a equipe ficar vazia ela é apagada (com o projeto);
+// se o criador sair, a criação passa ao integrante mais antigo.
+function tirarDaEquipe(eq, usuarioId) {
+  db.exec('BEGIN');
+  try {
+    db.prepare('DELETE FROM equipe_membros WHERE equipe_id = ? AND usuario_id = ?').run(eq.id, usuarioId);
+    const resto = db.prepare('SELECT usuario_id FROM equipe_membros WHERE equipe_id = ? ORDER BY rowid').all(eq.id);
+    if (!resto.length) {
+      db.prepare('DELETE FROM equipes WHERE id = ?').run(eq.id);
+    } else if (eq.criado_por === usuarioId) {
+      db.prepare('UPDATE equipes SET criado_por = ? WHERE id = ?').run(resto[0].usuario_id, eq.id);
+    }
+    db.exec('COMMIT');
+    return resto.length;
+  } catch (e) {
+    db.exec('ROLLBACK');
+    throw e;
+  }
+}
+
+function eventoEncerrado(eq) {
+  return !!db.prepare('SELECT encerrado FROM eventos WHERE id = ?').get(eq.evento_id).encerrado;
+}
+
+// POST /api/participante/equipes/:id/sair
+function sair(req, res, usuario) {
+  const eq = equipeDoUsuario(req, res, usuario);
+  if (!eq) return;
+  if (eventoEncerrado(eq)) return json(res, 403, { erro: 'O evento foi encerrado. Não é possível sair da equipe.' });
+  const restantes = tirarDaEquipe(eq, usuario.id);
+  json(res, 200, { ok: true, equipe_apagada: restantes === 0 });
+}
+
+// DELETE /api/participante/equipes/:id/membros/:membro — só o criador da equipe remove outros integrantes
+function removerMembro(req, res, usuario) {
+  const eq = equipeDoUsuario(req, res, usuario);
+  if (!eq) return;
+  if (eventoEncerrado(eq)) return json(res, 403, { erro: 'O evento foi encerrado. Não é possível remover integrantes.' });
+  if (eq.criado_por !== usuario.id) return json(res, 403, { erro: 'Apenas quem criou a equipe pode remover integrantes.' });
+  const alvo = req.params.membro;
+  if (alvo === usuario.id) return json(res, 400, { erro: 'Para sair da equipe, use o botão "Sair da equipe".' });
+  const existe = db.prepare('SELECT 1 FROM equipe_membros WHERE equipe_id = ? AND usuario_id = ?').get(eq.id, alvo);
+  if (!existe) return json(res, 404, { erro: 'Integrante não encontrado nesta equipe.' });
+  tirarDaEquipe(eq, alvo);
   json(res, 200, { ok: true });
 }
 
@@ -153,5 +211,7 @@ module.exports = {
     [`POST ${P}/entrar`]: part(entrar),
     [`GET ${P}/:id`]: part(detalhe),
     [`PUT ${P}/:id/projeto`]: part(salvarProjeto),
+    [`POST ${P}/:id/sair`]: part(sair),
+    [`DELETE ${P}/:id/membros/:membro`]: part(removerMembro),
   },
 };

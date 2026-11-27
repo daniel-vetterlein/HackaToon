@@ -34,10 +34,12 @@
           <div class="codigo-box">
             <small>Código da EQUIPE (compartilhe com seus colegas)</small>
             <code id="cod-equipe">—</code>
+            <button class="btn-copiar" type="button" data-copiar="cod-equipe">Copiar</button>
           </div>
           <div class="codigo-box">
             <small>Integrantes</small>
-            <span id="membros"></span>
+            <ul id="membros" class="membros"></ul>
+            <button class="btn btn-perigo btn-mini" id="btn-sair" type="button" style="justify-self:start">Sair da equipe</button>
           </div>
         </div>
       </section>
@@ -49,6 +51,8 @@
             <input id="p-nome" type="text" required maxlength="120"></div>
           <div class="campo"><label for="p-desc">Descrição</label>
             <textarea id="p-desc" rows="5" maxlength="3000"></textarea></div>
+          <div class="campo"><label for="p-desafio">Desafio do evento (recomendado)</label>
+            <select id="p-desafio"><option value="">— Nenhum desafio selecionado —</option></select></div>
           <div class="campo"><label for="p-github">Link do GitHub</label>
             <input id="p-github" type="url" maxlength="300" placeholder="https://github.com/usuario/repositorio"></div>
           <p class="form-erro" role="alert"></p>

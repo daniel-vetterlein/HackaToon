@@ -2,6 +2,7 @@ const db = require('../db');
 const { lerJson, json } = require('../utils/http');
 const { gerarHash } = require('../utils/senha');
 const { normalizarTelefone } = require('../utils/telefone');
+const { gerarCodigoRecuperacao, hashRecuperacao } = require('../utils/codigo');
 
 const REGEX_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -31,11 +32,12 @@ async function criar(req, res) {
   if (erro) return json(res, 400, { erro });
 
   const senhaHash = await gerarHash(dados.senha);
+  const codigoRecuperacao = gerarCodigoRecuperacao();
 
   try {
     db.prepare(
-      "INSERT INTO usuarios (tipo, nome, email, telefone, senha_hash) VALUES ('participante', ?, ?, ?, ?)"
-    ).run(dados.nome, dados.email, dados.telefone, senhaHash);
+      "INSERT INTO usuarios (tipo, nome, email, telefone, senha_hash, codigo_recuperacao_hash) VALUES ('participante', ?, ?, ?, ?, ?)"
+    ).run(dados.nome, dados.email, dados.telefone, senhaHash, hashRecuperacao(codigoRecuperacao));
   } catch (e) {
     if (String(e.message).includes('UNIQUE')) {
       return json(res, 409, { erro: 'E-mail ou telefone já cadastrado.' });
@@ -44,7 +46,8 @@ async function criar(req, res) {
     return json(res, 500, { erro: 'Erro interno ao cadastrar.' });
   }
 
-  json(res, 201, { ok: true });
+  // O código de recuperação é exibido uma única vez, logo após o cadastro
+  json(res, 201, { ok: true, codigo_recuperacao: codigoRecuperacao });
 }
 
 module.exports = { criar };

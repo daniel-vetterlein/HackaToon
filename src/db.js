@@ -107,6 +107,15 @@ if (!db.prepare('PRAGMA table_info(eventos)').all().some((c) => c.name === 'ence
   db.exec('ALTER TABLE eventos ADD COLUMN encerrado INTEGER NOT NULL DEFAULT 0');
 }
 
+// Migrações de colunas novas em bancos já existentes
+const temColuna = (tabela, coluna) => db.prepare(`PRAGMA table_info(${tabela})`).all().some((c) => c.name === coluna);
+if (!temColuna('usuarios', 'codigo_recuperacao_hash')) {
+  db.exec('ALTER TABLE usuarios ADD COLUMN codigo_recuperacao_hash TEXT');
+}
+if (!temColuna('projetos', 'desafio_id')) {
+  db.exec('ALTER TABLE projetos ADD COLUMN desafio_id INTEGER REFERENCES desafios(id) ON DELETE SET NULL');
+}
+
 // Migração: telefones antigos eram guardados sem o código do país (55)
 db.exec("UPDATE usuarios SET telefone = '55' || telefone WHERE length(telefone) IN (10, 11)");
 
